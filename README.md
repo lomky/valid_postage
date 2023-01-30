@@ -19,5 +19,6 @@ ell you how many ways you can make postage
 
 ## ISSUES
 
+- The recursion is eating the denominations so it only checks two levels. hmmmm
 - Passing in new stamp denominations isn't working quite right.
 - It'd be nice to save to file
