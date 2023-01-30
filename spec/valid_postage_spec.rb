@@ -10,7 +10,6 @@ RSpec.describe ValidPostage, '#initalize' do
       expect(postage.stamp_limit).to eq(3)
       expect(postage.target_postage).to eq(ValidPostage::US_POSTAGE_COSTS[:postcard])
       expect(postage.stamp_denoms).to eq(ValidPostage::US_POSTAGE_STAMPS)
-      expect(postage.valid_denoms[145]).to eq(false)
       expect(postage.valid_postage).to be_empty
     end
   end
@@ -23,8 +22,55 @@ RSpec.describe ValidPostage, '#initalize' do
       expect(postage.target_postage).to eq(99)
       expect(postage.stamp_denoms).to eq([80, 5])
 
-      expect(postage.valid_denoms[80]).to eq(false)
       expect(postage.valid_postage).to be_empty
+    end
+  end
+end
+
+
+RSpec.describe ValidPostage, '#calculate' do
+  context 'with inane arguments like' do
+    context 'unreachable target for given stamps denoms' do
+      it 'finds no valid postage' do
+        postage = ValidPostage.new(stamp_limit: 2, target_postage: 2000, stamp_denoms: [9, 5])
+
+        postage.calculate
+
+        expect(postage.valid_postage).to be_empty
+        expect(postage.calculations_complete).to be(true)
+      end
+    end
+  end
+  context 'with good arguments like' do
+    context 'stamps [145] and target 145' do
+      it 'finds valid postage' do
+        postage = ValidPostage.new(stamp_limit: 3, target_postage: 145, stamp_denoms: [145])
+
+        postage.calculate
+
+        expect(postage.valid_postage).to eq([[145]])
+        expect(postage.calculations_complete).to be(true)
+      end
+    end
+    context 'stamps [1000] and target 145' do
+      it 'finds valid postage' do
+        postage = ValidPostage.new(stamp_limit: 2, target_postage: 145, stamp_denoms: [1000])
+
+        postage.calculate
+
+        expect(postage.valid_postage).to eq([[1000]])
+        expect(postage.calculations_complete).to be(true)
+      end
+    end
+    context 'stamps [10,5,3,1] and target 13' do
+      it 'finds valid postage' do
+        postage = ValidPostage.new(stamp_limit: 4, target_postage: 13, stamp_denoms: [10, 5, 3, 1])
+
+        postage.calculate
+
+        expect(postage.valid_postage).to eq([[10, 10], [10, 5], [10, 3], [10, 1, 1, 1]])
+        expect(postage.calculations_complete).to be(true)
+      end
     end
   end
 end

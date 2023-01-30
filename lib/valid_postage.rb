@@ -10,9 +10,10 @@ class ValidPostage
     postcard: 48
   }.freeze
 
-  attr_accessor :stamp_limit, :target_postage, :valid_postage, :stamp_denoms, :valid_denoms
+  attr_accessor :stamp_limit, :target_postage, :valid_postage, :stamp_denoms, :calculations_complete
 
   # By default, what can we do with 3 US stamps on a postcard
+  # TODO Validate args
   def initialize(stamp_limit: 3, target_postage: US_POSTAGE_COSTS[:postcard], stamp_denoms: US_POSTAGE_STAMPS)
     # External-facing vars
     self.stamp_limit = stamp_limit
@@ -21,30 +22,47 @@ class ValidPostage
 
     # Working vars
     self.valid_postage = []
-    self.valid_denoms = stamp_denoms.to_h { |x| [x, false] }
+    self.calculations_complete = false
   end
 
+  # don't make the external users think about the args
+  def calculate
+    calculate_combinations(1, [], stamp_denoms)
+    # in case we didn't exhaust depth during calculations
+    self.calculations_complete = true
+  end
+
+  # actual calculation logic
   def calculate_combinations(current_depth, applied_postage, working_denoms)
-    # we have gotten to the point where the stamp limit of
-    # our highest remaining denomination won't make postage
-    # stop checking!
-    return if calculations_exhausted
+    # we discovered deeper in that we can't meet postage anymore, stop checking!
+    return if calculations_complete
+
+    # oops we're out of stamps options!
+    return if working_denoms.empty?
 
     active_denom = working_denoms.first
+
     # We are over our stamp count, return
-    # If we didn't get any valid combos with our
-    # highest denom, flag exhaustion
     if current_depth > stamp_limit
-      calculations_exhausted unless valid_denoms.active_denom
+      # we got to the depth limit with a single denom, quit checking
+      self.calculations_complete = true if applied_postage.first == active_denom
       return
     end
 
-    # Check the math!
-    applied_postage.push(active_denom)
+    # Add our active denomination
+    new_postage = [*applied_postage, active_denom]
 
-    # we made postage! yay!
-    return unless applied_postage.sum >= target_postage
+    # If we made postage, Add to valid combos
+    if new_postage.sum >= target_postage
+      valid_postage.push(new_postage)
+    else # Otherwise, continue depth-wise
+      calculate_combinations(current_depth + 1, new_postage, working_denoms)
+    end
 
-    valid_postage.push(applied_postage)
+    # Regardless, continue breadth-wise
+    # Remove the current largest denom
+    # call at our same depth with the same applied postage passed into us
+    working_denoms.shift
+    calculate_combinations(current_depth, applied_postage, working_denoms)
   end
 end
