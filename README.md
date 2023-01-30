@@ -1,6 +1,12 @@
+## INSTALL
+
+- clone repo
+- install ruby 3.2.0
+- (for tests) `gem install bundler && bundle install`
+
 ## USAGE
 
-Usage: calculate_postage [options]
+Usage: ./bin/calculate_postage [options]
 
 Given a target postage, some stamp denominations, and how many stamps you wanna use, this program will t
 ell you how many ways you can make postage

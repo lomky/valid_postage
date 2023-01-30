@@ -79,7 +79,7 @@ class ValidPostage
 
   def parse
     OptionParser.new do |parser|
-      parser.banner = 'Usage: calculate_postage [options]'
+      parser.banner = 'Usage: ./bin/calculate_postage [options]'
       parser.separator ''
       parser.separator 'Given a target postage, some stamp denominations, and how many stamps you wanna'
       parser.separator 'use, this program will tell you how many ways you can make postage'
