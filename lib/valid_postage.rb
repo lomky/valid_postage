@@ -13,19 +13,18 @@ class ValidPostage
   attr_accessor :stamp_limit, :target_postage, :valid_postage, :stamp_denoms, :calculations_complete
 
   # By default, what can we do with 3 US stamps on a postcard
-  # TODO Validate args
-  def initialize(stamp_limit: 3, target_postage: US_POSTAGE_COSTS[:postcard], stamp_denoms: US_POSTAGE_STAMPS)
+  def initialize
     # External-facing vars
-    self.stamp_limit = stamp_limit
-    self.target_postage = target_postage
-    self.stamp_denoms = stamp_denoms.sort.reverse
+    self.stamp_limit = 3
+    self.target_postage = US_POSTAGE_COSTS[:postcard]
+    self.stamp_denoms = US_POSTAGE_STAMPS.sort.reverse
 
     # Working vars
     self.valid_postage = []
     self.calculations_complete = false
   end
 
-  # don't make the external users think about the args
+  # don't make the external interface think about the args
   def calculate
     calculate_combinations(1, [], stamp_denoms)
     # in case we didn't exhaust depth during calculations
@@ -64,5 +63,31 @@ class ValidPostage
     # call at our same depth with the same applied postage passed into us
     working_denoms.shift
     calculate_combinations(current_depth, applied_postage, working_denoms)
+  end
+
+  def parse
+    OptionParser.new do |parser|
+      parser.banner = 'Usage: calculate_postage [options]'
+      parser.separator ''
+      parser.separator 'Given a target postage, some stamp denominations, and how many stamps you wanna use, this program will tell you how many ways you can make postage'
+      parser.separator ''
+
+      parser.on('-n', '--number LIMIT', Integer, 'How many stamps max. Default 3.') do |number|
+        self.stamp_limit = number
+      end
+
+      parser.on('-p', '--postage POSTAGE', Integer, 'Your target postage. Default is a US Postcard') do |postage|
+        self.target_postage = postage
+      end
+
+      parser.on('-s', '--stamps STAMPS', Array, 'Your stamp denominations, cents (or equivalent). Default is US Postage Stamp denominations') do |stamps|
+        self.stamp_denoms = stamps.map(&:to_i)
+      end
+
+      parser.on('-h', '--help', 'Show this message') do
+        puts parser
+        exit
+      end
+    end.parse!
   end
 end

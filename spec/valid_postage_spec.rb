@@ -13,26 +13,17 @@ RSpec.describe ValidPostage, '#initalize' do
       expect(postage.valid_postage).to be_empty
     end
   end
-
-  context 'fully specified' do
-    it 'initializes fine' do
-      postage = ValidPostage.new(stamp_limit: 2, target_postage: 99, stamp_denoms: [80, 5])
-
-      expect(postage.stamp_limit).to eq(2)
-      expect(postage.target_postage).to eq(99)
-      expect(postage.stamp_denoms).to eq([80, 5])
-
-      expect(postage.valid_postage).to be_empty
-    end
-  end
 end
-
 
 RSpec.describe ValidPostage, '#calculate' do
   context 'with inane arguments like' do
     context 'unreachable target for given stamps denoms' do
       it 'finds no valid postage' do
-        postage = ValidPostage.new(stamp_limit: 2, target_postage: 2000, stamp_denoms: [9, 5])
+        postage = ValidPostage.new
+
+        postage.stamp_limit = 2
+        postage.target_postage = 2000
+        postage.stamp_denoms = [9, 5]
 
         postage.calculate
 
@@ -44,7 +35,11 @@ RSpec.describe ValidPostage, '#calculate' do
   context 'with good arguments like' do
     context 'stamps [145] and target 145' do
       it 'finds valid postage' do
-        postage = ValidPostage.new(stamp_limit: 3, target_postage: 145, stamp_denoms: [145])
+        postage = ValidPostage.new
+
+        postage.stamp_limit = 3
+        postage.target_postage = 145
+        postage.stamp_denoms = [145]
 
         postage.calculate
 
@@ -54,7 +49,11 @@ RSpec.describe ValidPostage, '#calculate' do
     end
     context 'stamps [1000] and target 145' do
       it 'finds valid postage' do
-        postage = ValidPostage.new(stamp_limit: 2, target_postage: 145, stamp_denoms: [1000])
+        postage = ValidPostage.new
+
+        postage.stamp_limit = 2
+        postage.target_postage = 145
+        postage.stamp_denoms = [1000]
 
         postage.calculate
 
@@ -64,7 +63,11 @@ RSpec.describe ValidPostage, '#calculate' do
     end
     context 'stamps [10,5,3,1] and target 13' do
       it 'finds valid postage' do
-        postage = ValidPostage.new(stamp_limit: 4, target_postage: 13, stamp_denoms: [10, 5, 3, 1])
+        postage = ValidPostage.new
+
+        postage.stamp_limit = 4
+        postage.target_postage = 13
+        postage.stamp_denoms = [10, 5, 3, 1]
 
         postage.calculate
 

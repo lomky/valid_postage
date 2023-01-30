@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require_relative '../lib/valid_postage'
+
+validPostage = ValidPostage.new
+validPostage.parse
+validPostage.calculate
+pp validPostage.valid_postage
+
+
+
+
+
+
