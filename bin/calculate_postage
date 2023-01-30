@@ -1,14 +1,9 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require_relative '../lib/valid_postage'
 
-validPostage = ValidPostage.new
-validPostage.parse
-validPostage.calculate
-print validPostage.format_csv
-
-
-
-
-
-
+valid_postage = valid_postage.new
+valid_postage.parse
+valid_postage.calculate
+print valid_postage.format_csv

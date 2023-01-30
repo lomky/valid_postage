@@ -69,10 +69,10 @@ class ValidPostage
   end
 
   def format_csv
-    csv_string = CSV.generate do |csv|
-      csv << ["target", "num_stamps", "overpayment", "stamps" ]
+    CSV.generate do |csv|
+      csv << %w[target num_stamps overpayment stamps]
       valid_postage.each do |postage|
-        csv << [target_postage, postage.size, postage.sum - target_postage, "#{postage}"]
+        csv << [target_postage, postage.size, postage.sum - target_postage, postage.to_s]
       end
     end
   end
@@ -81,7 +81,8 @@ class ValidPostage
     OptionParser.new do |parser|
       parser.banner = 'Usage: calculate_postage [options]'
       parser.separator ''
-      parser.separator 'Given a target postage, some stamp denominations, and how many stamps you wanna use, this program will tell you how many ways you can make postage'
+      parser.separator 'Given a target postage, some stamp denominations, and how many stamps you wanna'
+      parser.separator 'use, this program will tell you how many ways you can make postage'
       parser.separator ''
 
       parser.on('-n', '--number LIMIT', Integer, 'How many stamps max. Default 3.') do |number|
@@ -92,7 +93,8 @@ class ValidPostage
         self.target_postage = postage
       end
 
-      parser.on('-s', '--stamps STAMPS', Array, 'Your stamp denominations, cents (or equivalent). Default is US Postage Stamp denominations') do |stamps|
+      parser.on('-s', '--stamps STAMPS', Array,
+                'Your stamp denominations, cents (or equivalent). Default is USPS denominations') do |stamps|
         self.stamp_denoms = stamps.map(&:to_i)
       end
 
