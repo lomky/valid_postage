@@ -3,7 +3,7 @@
 
 require_relative '../lib/valid_postage'
 
-valid_postage = valid_postage.new
+valid_postage = ValidPostage.new
 valid_postage.parse
 valid_postage.calculate
 print valid_postage.format_csv
