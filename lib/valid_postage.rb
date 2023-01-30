@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'csv'
+require 'optparse'
+
 # Given a set of stamps, the desired postage, and stamp limit, calculate how many ways we can make postage
 class ValidPostage
   # As of 2023-Jan
@@ -63,6 +66,15 @@ class ValidPostage
     # call at our same depth with the same applied postage passed into us
     working_denoms.shift
     calculate_combinations(current_depth, applied_postage, working_denoms)
+  end
+
+  def format_csv
+    csv_string = CSV.generate do |csv|
+      csv << ["target", "num_stamps", "overpayment", "stamps" ]
+      valid_postage.each do |postage|
+        csv << [target_postage, postage.size, postage.sum - target_postage, "#{postage}"]
+      end
+    end
   end
 
   def parse
