@@ -52,5 +52,6 @@ Using three stamps and a custom set of stamp values and postage:
 
 - Passing in new stamp denominations isn't working quite right.
 - Output format saying how many ways a denomination can be used
+- Add option to limit overpaying as a parameter
 - It'd be nice to save to file
 - Add tests for stamps with half-penny values
