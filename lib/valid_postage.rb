@@ -30,7 +30,6 @@ class ValidPostage
 
   # don't make the external interface think about the args
   def calculate
-    puts "Calculating for #{stamp_limit} stamps to reach #{target_postage} with stamps #{stamp_denoms}"
     calculate_combinations(1, [], stamp_denoms)
     # in case we didn't exhaust depth during calculations
     self.calculations_complete = true
@@ -38,7 +37,6 @@ class ValidPostage
 
   # actual calculation logic
   def calculate_combinations(current_depth, applied_postage, working_denoms)
-    puts "At depth #{current_depth}, current postage: #{applied_postage}, checking still: #{working_denoms}"
     # we discovered deeper in that we can't meet postage anymore, stop checking!
     return if calculations_complete
 
@@ -50,10 +48,7 @@ class ValidPostage
     # We are over our stamp count, return
     if current_depth > stamp_limit
       # we got to the depth limit with a single denom and it wasn't valid, quit checking
-#      if (applied_postage.first == active_denom && ! valid_denoms[active_denom])
-#        self.calculations_complete = true
-#      end
-      puts "  Ran out of stamps!"
+      self.calculations_complete = true if applied_postage.first == active_denom && !valid_denoms[active_denom]
       return
     end
 
@@ -62,21 +57,19 @@ class ValidPostage
 
     # If we made postage, Add to valid combos
     if new_postage.sum >= target_postage
-      puts "  Found valid postage! #{new_postage}"
       valid_postage.push(new_postage)
       valid_denoms[active_denom] = true
     else # Otherwise, continue depth-wise
-      puts "  Insufficient: #{new_postage}, going deeper"
-      depth_copy = working_denoms
+      depth_copy = working_denoms.map(&:clone)
       calculate_combinations(current_depth + 1, new_postage, depth_copy)
     end
 
     # Regardless, continue breadth-wise
     # Remove the current largest denom
     # call at our same depth with the same applied postage passed into us
-    puts "  Trying with the next denom"
-    working_denoms.shift
-    calculate_combinations(current_depth, applied_postage, working_denoms)
+    breadth_copy = working_denoms.map(&:clone)
+    breadth_copy.shift
+    calculate_combinations(current_depth, applied_postage, breadth_copy)
   end
 
   def format_csv
@@ -85,6 +78,12 @@ class ValidPostage
       valid_postage.each do |postage|
         csv << [target_postage, postage.size, postage.sum - target_postage, postage.to_s]
       end
+    end
+  end
+
+  def format_pretty
+    (1..stamp_limit).each do |count|
+      count_stamps = valid_postage.select { |e| e.size == count }
     end
   end
 

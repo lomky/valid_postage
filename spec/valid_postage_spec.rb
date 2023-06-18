@@ -71,8 +71,25 @@ RSpec.describe ValidPostage, '#calculate' do
 
         postage.calculate
 
-        expect(postage.valid_postage).to eq([[10, 10], [10, 5], [10, 3], [10, 1, 1, 1]])
+        expect(postage.valid_postage).to eq([[10, 10], [10, 5], [10, 3], [10, 1, 1, 1], [5, 5, 5], [5, 5, 3],
+                                             [5, 3, 3, 3]])
         expect(postage.calculations_complete).to be(true)
+      end
+    end
+
+    context 'US 2023 stamps and postcard target with limit 4' do
+      it 'finds valid postage' do
+        postage = ValidPostage.new
+
+        postage.stamp_limit = 4
+        postage.target_postage = 48
+        postage.stamp_denoms = [145, 111, 103, 100, 87, 63, 48, 40, 24, 10, 5, 4, 3, 2, 1]
+
+        postage.calculate
+
+        expect(postage.calculations_complete).to be(true)
+        expect(postage.valid_postage).to match_array([[145], [111], [103], [100], [87], [63], [48], [40, 40], [40, 24],
+                                                      [40, 10], [24, 24], [40, 5, 5], [40, 5, 4], [40, 5, 3], [40, 4, 4], [40, 5, 2, 2], [40, 5, 2, 1], [40, 4, 3, 3], [40, 4, 3, 2], [40, 4, 3, 1], [40, 4, 2, 2], [40, 3, 3, 3], [40, 3, 3, 2], [24, 10, 10, 10], [24, 10, 10, 5], [24, 10, 10, 4]])
       end
     end
   end
