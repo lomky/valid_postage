@@ -47,6 +47,7 @@ RSpec.describe ValidPostage, '#calculate' do
         expect(postage.calculations_complete).to be(true)
       end
     end
+
     context 'stamps [1000] and target 145' do
       it 'finds valid postage' do
         postage = ValidPostage.new
@@ -61,6 +62,7 @@ RSpec.describe ValidPostage, '#calculate' do
         expect(postage.calculations_complete).to be(true)
       end
     end
+
     context 'stamps [10,5,3,1] and target 13' do
       it 'finds valid postage' do
         postage = ValidPostage.new
