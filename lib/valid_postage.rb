@@ -5,12 +5,12 @@ require 'optparse'
 
 # Given a set of stamps, the desired postage, and stamp limit, calculate how many ways we can make postage
 class ValidPostage
-  # As of 2023-Jan
-  US_POSTAGE_STAMPS = [145, 111, 103, 100, 87, 63, 48, 40, 24, 10, 5, 4, 3, 2, 1].freeze
+  # As of 2023-Sep
+  US_POSTAGE_STAMPS = [150, 106, 90, 66, 51, 40, 24, 10, 5, 4, 3, 2, 1].freeze
   US_POSTAGE_COSTS = {
-    international: 145,
-    letter: 63,
-    postcard: 48
+    international: 150,
+    letter: 66,
+    postcard: 51
   }.freeze
 
   attr_accessor :stamp_limit, :overpay_limit, :target_postage, :valid_postage, :stamp_denoms, :calculations_complete,
